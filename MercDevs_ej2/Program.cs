@@ -1,9 +1,11 @@
 using MercDevs_ej2.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 // Configuración de Rotativa
-
+builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
+builder.Services.AddSingleton<IRotativaConfiguration>(new RotativaConfiguration
+{
+    WkhtmltopdfPath = @"C:\Users\f_mrt\OneDrive\Escritorio\proyectos en net-\mer_p8\MercDevs_ej2\wwwroot\rotativa\wkhtmltopdf.exe"
+});
 
 var app = builder.Build();
 

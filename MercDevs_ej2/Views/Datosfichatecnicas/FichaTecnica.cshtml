@@ -2,21 +2,24 @@
 
 <h1>Datos Ficha Tecnica</h1>
 
+<a asp-action="GenerarPdf" asp-route-id="@Model.IdDatosFichaTecnica" class="btn btn-warning">Generar PDF</a>
+
+
+
 <table class="table table-dark table-striped border border-light-subtle border-3">
     <thead style="text-align:center">
         <tr>
             <th colspan="3">Datos Ficha Tecnica</th>
         </tr>
-        <a asp-action="Descargaficha" class="btn btn-warning">Descargar Ficha Técnica en PDF</a>
-        <button type="button" class="btn btn-warning">Ver Diagnostico</button></a>
         <tr>
             <th class="border-end">ID Ficha: @Model.IdDatosFichaTecnica</th>
             <th class="border-end">Fecha Inicio: @(Model.FechaInicio?.ToString("dd/MM/yyyy"))</th>
             <th class="border-end">Fecha Finalizacion: @(Model.FechaFinalizacion?.ToString("dd/MM/yyyy"))</th>
-    </thead>
         </tr>
+    </thead>
 </table>
 
+<!-- Datos del Cliente -->
 <table class="table table-dark table-striped border border-light-subtle border-3">
     <thead style="text-align:center">
         <tr>
@@ -25,7 +28,7 @@
     </thead>
     <tbody>
         <tr>
-            <th class="border-end">Nombre: @Model.RecepcionEquipo?.IdClienteNavigation.Nombre</t>
+            <th class="border-end">Nombre: @Model.RecepcionEquipo?.IdClienteNavigation.Nombre</th>
             <th class="border-end">Apellido: @Model.RecepcionEquipo?.IdClienteNavigation.Apellido</th>
             <th class="border-end">Celular: @Model.RecepcionEquipo?.IdClienteNavigation.Telefono</th>
         </tr>
@@ -36,101 +39,74 @@
     </tbody>
 </table>
 
-
+<!-- Datos Recepción de Equipo -->
 <table class="table table-dark table-striped border border-light-subtle border-3">
     <thead style="text-align:center">
         <tr>
-            <th colspan="3">Datos Recepcion de Equipo</th>
+            <th colspan="3">Datos Recepción de Equipo</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <th class="border-end">Fecha: @Model.RecepcionEquipo?.Fecha</t>
+            <th class="border-end">Fecha: @Model.RecepcionEquipo?.Fecha</th>
             <th class="border-end">
-                Tipo Pc:                 @{
-                        string tipopc = "";
-                        switch (Model.RecepcionEquipo.TipoPc)
-                        {
-                            case 0:
-                                tipopc = "Pc Torre";
-                                break;
-                            case 1:
-                                tipopc = "Notebook";
-                                break;
-                            case 2:
-                                tipopc = "All in one";
-                                break;
-                        }
-                        @tipopc
-                    }
+                Tipo Pc: @{
+                    string tipopc = Model.RecepcionEquipo?.TipoPc switch
+                    {
+                        0 => "Pc Torre",
+                        1 => "Notebook",
+                        2 => "All in one",
+                        _ => ""
+                    };
+                    @tipopc
+                }
             </th>
             <th class="border-end">Accesorios: @Model.RecepcionEquipo?.Accesorio</th>
         </tr>
         <tr>
-            <th class="border-end">MarcaPc: @Model.RecepcionEquipo?.MarcaPc</t>
-            <th class="border-end">ModeloPc: @Model.RecepcionEquipo?.ModeloPc</th>
+            <th class="border-end">Marca Pc: @Model.RecepcionEquipo?.MarcaPc</th>
+            <th class="border-end">Modelo Pc: @Model.RecepcionEquipo?.ModeloPc</th>
             <th class="border-end">Numero Serie: @Model.RecepcionEquipo?.Nserie</th>
         </tr>
         <tr>
             <th class="border-end">
                 Capacidad RAM: @{
-                    string capacidadram = "";
-                    switch (Model.RecepcionEquipo.CapacidadRam)
+                    string capacidadram = Model.RecepcionEquipo?.CapacidadRam switch
                     {
-                        case 0:
-                            capacidadram = "4 GB";
-                            break;
-                        case 1:
-                            capacidadram = "6 GB";
-                            break;
-                        case 2:
-                            capacidadram = "8 GB";
-                            break;
-                        case 3:
-                            capacidadram = "12 GB";
-                            break;
-                        case 4:
-                            capacidadram = "OTRA";
-                            break;
-                    }
+                        0 => "4 GB",
+                        1 => "6 GB",
+                        2 => "8 GB",
+                        3 => "12 GB",
+                        4 => "OTRA",
+                        _ => ""
+                    };
                     @capacidadram
-                }</t>
+                }
+            </th>
             <th class="border-end">
                 Tipo GPU: @{
-                        string tipogpu = "";
-                        switch (Model.RecepcionEquipo.TipoGpu)
-                        {
-                            case 0:
-                                tipogpu = "Chip integrado";
-                                break;
-                            case 1:
-                                tipogpu = "Tarjeta";
-                                break;
-                        }
-                        @tipogpu
-                    }
+                    string tipogpu = Model.RecepcionEquipo?.TipoGpu switch
+                    {
+                        0 => "Chip integrado",
+                        1 => "Tarjeta",
+                        _ => ""
+                    };
+                    @tipogpu
+                }
             </th>
             <th class="border-end">Graficos: @Model.RecepcionEquipo?.Grafico</th>
         </tr>
         <tr>
             <td colspan="2" class="border-end">
                 Tipo Almacenamiento: @{
-                    string tipoalmacenamiento = "";
-                    switch (Model.RecepcionEquipo.TipoAlmacenamiento)
+                    string tipoalmacenamiento = Model.RecepcionEquipo?.TipoAlmacenamiento switch
                     {
-                        case 0:
-                            tipoalmacenamiento = "HDD";
-                            break;
-                        case 1:
-                            tipoalmacenamiento = "SSD SATA";
-                            break;
-                        case 2:
-                            tipoalmacenamiento = "SSD M.2";
-                            break;
-                        case 3:
-                            tipoalmacenamiento = "SSD NVM M.2";
-                            break;
-                    }
+                        0 => "HDD",
+                        1 => "SSD SATA",
+                        2 => "SSD M.2",
+                        3 => "SSD NVM M.2",
+                        _ => ""
+                    };
                     @tipoalmacenamiento
                 }
             </td>
@@ -139,7 +115,7 @@
     </tbody>
 </table>
 
-
+<!-- Datos Ficha Técnica -->
 <table class="table table-dark table-striped border border-light-subtle border-3">
     <thead style="text-align:center">
         <tr>
@@ -150,96 +126,64 @@
         <tr>
             <th class="border-end">
                 S.O instalado: @{
-                    string soinstalado = "";
-                    switch (Model.Soinstalado)
+                    string soinstalado = Model.Soinstalado switch
                     {
-                        case 0:
-                            soinstalado = "Windows 10";
-                            break;
-                        case 1:
-                            soinstalado = "Windows 11";
-                            break;
-                        case 2:
-                            soinstalado = "Linux";
-                            break;
-                    }
+                        0 => "Windows 10",
+                        1 => "Windows 11",
+                        2 => "Linux",
+                        _ => ""
+                    };
                     @soinstalado
                 }
-                </t>
+            </th>
             <th class="border-end">
-                Suite oficce instalada: @{
-                        string suiteofficeinstalada = "";
-                        switch (Model.SuiteOfficeInstalada)
-                        {
-                            case 0:
-                                suiteofficeinstalada = "Microsoft Office 2013";
-                                break;
-                            case 1:
-                                suiteofficeinstalada = "Microsoft Office 2019";
-                                break;
-                            case 2:
-                                suiteofficeinstalada = "Microsoft Office 365";
-                                break;
-                            case 3:
-                                suiteofficeinstalada = "OpenOffice";
-                                break;
-                        }
-                        @suiteofficeinstalada
-                    }
+                Suite Office instalada: @{
+                    string suiteofficeinstalada = Model.SuiteOfficeInstalada switch
+                    {
+                        0 => "Microsoft Office 2013",
+                        1 => "Microsoft Office 2019",
+                        2 => "Microsoft Office 365",
+                        3 => "OpenOffice",
+                        _ => ""
+                    };
+                    @suiteofficeinstalada
+                }
             </th>
             <th class="border-end">
                 Lector PDF instalado: @{
-                        string lectorpdfinstalado = "";
-                        switch (Model.LectorPdfinstalado)
-                        {
-                            case 0:
-                                lectorpdfinstalado = "No Instalado";
-                                break;
-                            case 1:
-                                lectorpdfinstalado = "Instalado";
-                                break;
-                            case 2:
-                                lectorpdfinstalado = "No Aplica";
-                                break;
-                        }
-                        @lectorpdfinstalado
-                    }
+                    string lectorpdfinstalado = Model.LectorPdfinstalado switch
+                    {
+                        0 => "No Instalado",
+                        1 => "Instalado",
+                        2 => "No Aplica",
+                        _ => ""
+                    };
+                    @lectorpdfinstalado
+                }
             </th>
         </tr>
         <tr>
             <td colspan="2" class="border-end">
                 Navegador Web instalado: @{
-                    string navegadorwebinstalado = "";
-                    switch (Model.NavegadorWebInstalado)
+                    string navegadorwebinstalado = Model.NavegadorWebInstalado switch
                     {
-                        case 0:
-                            navegadorwebinstalado = "No Instalado";
-                            break;
-                        case 1:
-                            navegadorwebinstalado = "Chrome";
-                            break;
-                        case 2:
-                            navegadorwebinstalado = "Chrome y Firefox";
-                            break;
-                    }
+                        0 => "No Instalado",
+                        1 => "Chrome",
+                        2 => "Chrome y Firefox",
+                        _ => ""
+                    };
                     @navegadorwebinstalado
                 }
             </td>
             <td colspan="2" class="border-end">
                 Antivirus instalado: @{
-                    string antivirusinstalado = "";
-                    switch (Model.AntivirusInstalado)
+                    string antivirusinstalado = Model.AntivirusInstalado switch
                     {
-                        case "0":
-                            antivirusinstalado = "No Instalado";
-                            break;
-                        case "1":
-                            antivirusinstalado = "Avast";
-                            break;
-                        case "2":
-                            antivirusinstalado = "Mcfee";
-                            break;
-                    }
+                        "0" => "No Instalado",
+                        "1" => "Avast",
+                        "2" => "Mcfee",
+                        _ => ""
+                    };
                     @antivirusinstalado
                 }
             </td>
@@ -247,7 +191,7 @@
     </tbody>
 </table>
 
-
+<!-- Diagnóstico y Soluciones -->
 <table class="table table-dark table-striped border border-light-subtle border-3">
     <thead style="text-align:center">
         <tr>
@@ -256,17 +200,17 @@
     </thead>
     <tbody>
         <tr>
-                @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
-                {
+            @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
+            {
                 <th class="border-end">No hay diagnostico disponible</th>
-                }
-                else
+            }
+            else
+            {
+                foreach (var diagnostico in Model.Diagnosticosolucions)
                 {
-                    foreach (var diagnostico in Model.Diagnosticosolucions)
-                    {
                     <th class="border-end">Diagnostico: @diagnostico.DescripcionDiagnostico</th>
-                    }
                 }
+            }
         </tr>
         <tr>
             @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
@@ -282,12 +226,13 @@
             }
         </tr>
     </tbody>
- </table>
+</table>
 
-<table class="table table-dark table-striped border border-light-subtle border border-3">
+<!-- Observaciones y Recomendaciones -->
+<table class="table table-dark table-striped border border-light-subtle border-3">
     <thead style="text-align:center">
         <tr>
-            <th colspan="3">Observaciones y recomendaciones</th>
+            <th colspan="3">Observaciones y Recomendaciones</th>
         </tr>
     </thead>
     <tbody>

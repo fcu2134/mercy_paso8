@@ -1,19 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
+using Rotativa.AspNetCore;
 using MercDevs_ej2.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MercDevs_ej2.Controllers
 {
     public class DatosfichatecnicasController : Controller
     {
         private readonly MercyDeveloperContext _context;
+        private readonly string _wkhtmltopdfPath;
 
         public DatosfichatecnicasController(MercyDeveloperContext context)
         {
             _context = context;
+            _wkhtmltopdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "rotativa", "wkhtmltopdf.exe");
         }
 
         public async Task<IActionResult> FichaTecnica(int? id)
@@ -26,8 +29,6 @@ namespace MercDevs_ej2.Controllers
                 .FirstOrDefaultAsync(d => d.RecepcionEquipoId == id);
             return View(mercydevsEjercicio2Context);
         }
-
-      
 
         public async Task<IActionResult> Inicio()
         {
@@ -204,6 +205,28 @@ namespace MercDevs_ej2.Controllers
         private bool DatosfichatecnicaExists(int id)
         {
             return _context.Datosfichatecnicas.Any(e => e.IdDatosFichaTecnica == id);
+        }
+
+        // Método para generar PDF usando Rotativa
+        public async Task<IActionResult> GeneratePdf(int id)
+        {
+            var fichaTecnica = await _context.Datosfichatecnicas
+                .Where(d => d.IdDatosFichaTecnica == id)
+                .Include(d => d.RecepcionEquipo)
+                .Include(d => d.Diagnosticosolucions)
+                .Include(d => d.RecepcionEquipo.IdClienteNavigation)
+                .FirstOrDefaultAsync(d => d.IdDatosFichaTecnica == id);
+
+            if (fichaTecnica == null)
+            {
+                return NotFound();
+            }
+
+            return new ViewAsPdf("VistaPdf", fichaTecnica)
+            {
+                FileName = "FichaTecnica.pdf",
+                PageSize = Rotativa.AspNetCore.Options.Size.A4
+            };
         }
     }
 }

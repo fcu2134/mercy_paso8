@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\rotativa\" />
     <Folder Include="wwwroot\srcImg\" />
   </ItemGroup>
 
