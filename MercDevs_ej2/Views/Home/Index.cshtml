@@ -1,0 +1,76 @@
+﻿@using System.Security.Claims;
+
+
+@{
+    ViewData["Title"] = "Página de Inicio";
+}
+
+@if (User.Identity!.IsAuthenticated)
+{
+    <div class="text-center">
+        <h1 class="display-4">Bienvenido al sistema Soporte Hardware/Software y S.O      
+        </h1>
+    </div>
+
+
+    <form>
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Nombre" value="@User.Claims.Where(c =>
+            c.Type == ClaimTypes.Name).Select(c =>
+                c.Value).SingleOrDefault()" disabled>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Correo" value="@User.Claims.Where(c =>
+                c.Type == ClaimTypes.Email).Select(c =>
+            c.Value).SingleOrDefault()" disabled>
+            </div>
+        </div>
+    </form>
+
+    <hr />
+
+    <div class="text-center">
+        <h1 class="display-4">Recepcion de Equipos en Proceso</h1>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre y Apellido del Cliente</th>
+                <th>Correo Electrónico del Cliente</th>
+                <th>Fecha Recepción de Equipo</th>
+                <th>Marca de PC</th>
+                <th>Modelo PC</th>
+                <th>Nombre del Servicio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var recepcion in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="Clientes" asp-action="Details" asp-route-id="@recepcion.IdCliente">
+                            @recepcion.IdClienteNavigation.Nombre @recepcion.IdClienteNavigation.Apellido
+                        </a>
+                    </td>
+                    <td>@recepcion.IdClienteNavigation.Correo</td>
+                    <td>@recepcion.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@recepcion.MarcaPc</td>
+                    <td>@recepcion.ModeloPc</td>
+                    <td>
+                        <a asp-controller="Servicios" asp-action="Details" asp-route-id="@recepcion.IdServicio">
+                            @recepcion.IdServicioNavigation.Nombre
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-controller="Recepcionequipoes" asp-action="DetailsId" asp-route-id="@recepcion.Id">Ver Recepción Equipo</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+};
+
+

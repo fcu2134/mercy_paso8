@@ -1,0 +1,82 @@
+﻿@model IEnumerable<MercDevs_ej2.Models.Recepcionequipo>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Lista Recepcion De equipos</h1>
+<body style="align-content:center">
+    <p>
+        <a asp-action="Create"><button type="button" class="btn btn-success ">Crear Recepcion</button></a>
+    </p>
+    <table class="table">
+        <thead td style="white-space: nowrap;">
+            <tr>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Estado)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TipoPc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MarcaPc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ModeloPc)
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody style="text-align">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="white-space: nowrap;">
+                        @Html.DisplayFor(modelItem => item.Fecha)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Estado)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoPc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MarcaPc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ModeloPc)
+                    </td>
+                    
+                    <td>
+
+                        <div class="d-flex justify-content-around" style="gap:10px">
+                            <a asp-action="Edit" asp-route-id="@item.Id">
+                                <button type="button" class="btn btn-primary" style="width:100%">Editar</button>
+                            </a>
+
+                            <a asp-action="DetailsId" asp-route-id="@item.Id">
+                                <button type="button" class="btn btn-info" style="width:100%">Detalle</button>
+                            </a>
+
+                            <a asp-action="Delete" asp-route-id="@item.Id">
+                                <button type="button" class="btn btn-danger" style="width:100%">Borrar</button>
+                            </a>
+
+                            <a asp-controller="Datosfichatecnicas" asp-action="VerDatosFichaTecnicaPorRecepcion" asp-route-id="@item.Id">
+                                <button type="button" class="btn btn-info" style="width:100%">Datos Ficha</button>
+                            </a>
+
+                            <form method="post" asp-action="Finalizar" asp-route-id="@item?.Id">
+                                <button type="submit" class="btn btn-warning">Finalizar Recepción</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
