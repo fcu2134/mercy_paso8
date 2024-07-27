@@ -1,15 +1,11 @@
 using MercDevs_ej2.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Agregar servicios al contenedor.
 builder.Services.AddControllersWithViews();
 
 // Configuración de la conexión a la base de datos
@@ -25,16 +21,21 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromDays(1);
     });
 
-// Configuración de Rotativa
-builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
-builder.Services.AddSingleton<IRotativaConfiguration>(new RotativaConfiguration
-{
-    WkhtmltopdfPath = @"C:\Users\f_mrt\OneDrive\Escritorio\proyectos en net-\mer_p8\MercDevs_ej2\wwwroot\rotativa\wkhtmltopdf.exe"
-});
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Verifica que el directorio wwwroot exista y la ruta sea correcta
+var env = app.Services.GetRequiredService<IWebHostEnvironment>();
+var rotativaPath = Path.Combine(env.WebRootPath, "rotativa", "wkhtmltopdf.exe");
+
+if (!File.Exists(rotativaPath))
+{
+    throw new FileNotFoundException("El archivo wkhtmltopdf.exe no se encuentra en la ruta especificada.", rotativaPath);
+}
+
+// Configura Rotativa con la ruta correcta
+RotativaConfiguration.Setup(rotativaPath);
+
+// Configuración del pipeline de solicitudes HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
