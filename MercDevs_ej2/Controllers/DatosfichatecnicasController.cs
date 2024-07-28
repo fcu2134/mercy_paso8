@@ -236,8 +236,7 @@ namespace MercDevs_ej2.Controllers
             }
             catch (Exception ex)
             {
-                // Manejo de excepciones, registrar el error y/o mostrar un mensaje adecuado
-                // Puedes usar un logger para registrar el error
+                
                 return StatusCode(500, $"Error al generar el PDF: {ex.Message}");
             }
         }
