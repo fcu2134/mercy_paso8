@@ -253,5 +253,40 @@ namespace MercDevs_ej2.Controllers
         {
             return _context.Datosfichatecnicas.Any(e => e.IdDatosFichaTecnica == id);
         }
+
+        // Método para generar PDF usando Rotativa
+        public async Task<IActionResult> Generarpdf(int id)
+        {
+            // Obtener los datos de la ficha técnica, incluyendo las propiedades relacionadas
+            var fichaTecnica = await _context.Datosfichatecnicas
+                .Where(d => d.IdDatosFichaTecnica == id)
+                .Include(d => d.RecepcionEquipo)
+                .ThenInclude(r => r.IdClienteNavigation) // Incluye los datos del cliente
+                .Include(d => d.Diagnosticosolucions)
+                .FirstOrDefaultAsync();
+
+            if (fichaTecnica == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                // Generar el PDF utilizando la vista y el modelo
+                return new ViewAsPdf("VistaPdf", fichaTecnica)
+                {
+                    FileName = "FichaTecnica.pdf",
+                    PageSize = Rotativa.AspNetCore.Options.Size.A4,
+                    PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait, // Opcional, según el diseño
+                    CustomSwitches = "--disable-smart-shrinking" // Opcional, para ajustar el contenido al tamaño de página
+                };
+            }
+            catch (Exception ex)
+            {
+                // Manejo de excepciones, registrar el error y/o mostrar un mensaje adecuado
+                // Puedes usar un logger para registrar el error
+                return StatusCode(500, $"Error al generar el PDF: {ex.Message}");
+            }
+        }
     }
 }
