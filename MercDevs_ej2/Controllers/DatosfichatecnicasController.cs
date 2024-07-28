@@ -21,7 +21,7 @@ namespace MercDevs_ej2.Controllers
         [HttpPost]
         public async Task<IActionResult> EnviarFichaPorCorreo([FromBody] PdfRequest request)
         {
-            // Recupera el modelo basado en la información proporcionada
+           
             var modelo = await _context.Datosfichatecnicas
                 .Include(d => d.RecepcionEquipo)
                 .ThenInclude(r => r.IdClienteNavigation)
@@ -38,12 +38,12 @@ namespace MercDevs_ej2.Controllers
             {
                 try
                 {
-                    // Decodifica el PDF recibido en base64
+                   
                     var pdfBytes = Convert.FromBase64String(request.PdfData.Split(',')[1]);
 
-                    // Envía el PDF por correo
+                   
                     var asunto = "Ficha Técnica";
-                    var cuerpo = "Adjunto la ficha técnica solicitada.";
+                    var cuerpo = "Adjunto la ficha técnica solicitada. cualquier consulta puedes enviarme un correo .";
                     await _emailService.SendEmailWithAttachmentAsync(destinatario, asunto, cuerpo, pdfBytes, "ficha_tecnica.pdf");
 
                     return Json(new { success = true });

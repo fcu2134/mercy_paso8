@@ -335,9 +335,9 @@ else
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script>
         document.getElementById('generatePdf').addEventListener('click', function () {
-            var element = document.getElementById('pdfContent'); // Selecciona el contenido deseado
+            var element = document.getElementById('pdfContent'); 
             var opt = {
-                margin: 0.5, // Ajusta el margen si es necesario
+                margin: 0.5, 
                 filename: 'ficha_tecnica.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
@@ -359,7 +359,7 @@ else
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ pdfData: pdfData.split(',')[1] }) // Solo enviar la parte base64
+                    body: JSON.stringify({ pdfData: pdfData.split(',')[1] }) 
                 })
                 .then(response => response.json())
                 .then(data => {
