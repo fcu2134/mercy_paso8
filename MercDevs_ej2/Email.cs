@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-
+//ccreo una clase totalmente de nue8vo en donde integro los servicios que consumire en mi controlador ,basicamente este vendria siendo la conexion del servidor de gmail uwuw(assi lo entendi yo)
 public class Email
 {
     private readonly SmtpSettings _smtpSettings;

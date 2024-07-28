@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MercDevs_ej2.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Rotativa.AspNetCore;
 
 namespace MercDevs_ej2.Controllers
 {
@@ -9,10 +10,11 @@ namespace MercDevs_ej2.Controllers
     {
         private readonly MercyDeveloperContext _context;
         private readonly Email _emailService;
-        
+        private readonly ILogger<DatosfichatecnicasController> _logger;
 
-        public DatosfichatecnicasController(MercyDeveloperContext context, Email emailService)
+        public DatosfichatecnicasController(MercyDeveloperContext context, Email emailService, ILogger<DatosfichatecnicasController> logger)
         {
+            _logger = logger;
             _context = context;
             _emailService = emailService;
         }
@@ -21,7 +23,11 @@ namespace MercDevs_ej2.Controllers
         [HttpPost]
         public async Task<IActionResult> EnviarFichaPorCorreo([FromBody] PdfRequest request)
         {
-           
+            if (request == null || string.IsNullOrEmpty(request.PdfData) || request.Id <= 0)
+            {
+                return BadRequest(new { success = false, message = "Datos de solicitud inválidos" });
+            }
+
             var modelo = await _context.Datosfichatecnicas
                 .Include(d => d.RecepcionEquipo)
                 .ThenInclude(r => r.IdClienteNavigation)
@@ -34,39 +40,34 @@ namespace MercDevs_ej2.Controllers
 
             var destinatario = modelo.RecepcionEquipo?.IdClienteNavigation?.Correo;
 
-            if (destinatario != null)
-            {
-                try
-                {
-                   
-                    var pdfBytes = Convert.FromBase64String(request.PdfData.Split(',')[1]);
-
-                   
-                    var asunto = "Ficha Técnica";
-                    var cuerpo = "Adjunto la ficha técnica solicitada. cualquier consulta puedes enviarme un correo .";
-                    await _emailService.SendEmailWithAttachmentAsync(destinatario, asunto, cuerpo, pdfBytes, "ficha_tecnica.pdf");
-
-                    return Json(new { success = true });
-                }
-                catch (Exception ex)
-                {
-                    // Maneja excepciones y devuelve un error
-                    return Json(new { success = false, message = $"Error al enviar el correo: {ex.Message}" });
-                }
-            }
-            else
+            if (string.IsNullOrEmpty(destinatario))
             {
                 return Json(new { success = false, message = "El correo electrónico del destinatario no se encuentra." });
             }
-        }
+
+            try
+            {//quierne saber que hice aca ? pues basicamente convierto y adjunto los datos solicitados haciendo uunsa espera para poder insertar
+                var pdfBytes = Convert.FromBase64String(request.PdfData);
+                var asunto = "Ficha Técnica";
+                var cuerpo = "Adjunto la ficha técnica solicitada. Cualquier consulta puedes enviarme un correo. (avisame si te llega prr)";
+                await _emailService.SendEmailWithAttachmentAsync(destinatario, asunto, cuerpo, pdfBytes, "ficha_tecnica.pdf");
+
+                return Json(new { success = true });
+            }//manejos de errore s cachai ? si falla por algun motivo pum mensaje de error pum se frena 
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al enviar el correo");
+                return Json(new { success = false, message = $"Error al enviar el correo: {ex.Message}" });
+            }
+        }//hago una clase pequeña indicando los recursos que necesito uwuw
         public class PdfRequest
         {
             public string PdfData { get; set; }
             public int Id { get; set; }
         }
-    
 
-    public async Task<IActionResult> FichaTecnica(int? id)
+
+        public async Task<IActionResult> FichaTecnica(int? id)
         {
             var mercydevsEjercicio2Context = await _context.Datosfichatecnicas
                 .Where(d => d.IdDatosFichaTecnica == id)
@@ -254,39 +255,6 @@ namespace MercDevs_ej2.Controllers
             return _context.Datosfichatecnicas.Any(e => e.IdDatosFichaTecnica == id);
         }
 
-        // Método para generar PDF usando Rotativa
-        public async Task<IActionResult> Generarpdf(int id)
-        {
-            // Obtener los datos de la ficha técnica, incluyendo las propiedades relacionadas
-            var fichaTecnica = await _context.Datosfichatecnicas
-                .Where(d => d.IdDatosFichaTecnica == id)
-                .Include(d => d.RecepcionEquipo)
-                .ThenInclude(r => r.IdClienteNavigation) // Incluye los datos del cliente
-                .Include(d => d.Diagnosticosolucions)
-                .FirstOrDefaultAsync();
 
-            if (fichaTecnica == null)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                // Generar el PDF utilizando la vista y el modelo
-                return new ViewAsPdf("VistaPdf", fichaTecnica)
-                {
-                    FileName = "FichaTecnica.pdf",
-                    PageSize = Rotativa.AspNetCore.Options.Size.A4,
-                    PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait, // Opcional, según el diseño
-                    CustomSwitches = "--disable-smart-shrinking" // Opcional, para ajustar el contenido al tamaño de página
-                };
-            }
-            catch (Exception ex)
-            {
-                // Manejo de excepciones, registrar el error y/o mostrar un mensaje adecuado
-                // Puedes usar un logger para registrar el error
-                return StatusCode(500, $"Error al generar el PDF: {ex.Message}");
-            }
-        }
     }
 }

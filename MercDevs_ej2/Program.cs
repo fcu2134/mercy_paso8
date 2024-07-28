@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 //Para iniciar sesión y prohibir ingresos
 using Microsoft.AspNetCore.Authentication.Cookies;
-using PdfSharp.Charting;
+
 using System.Configuration;
 //FIN
 var builder = WebApplication.CreateBuilder(args);
+//iintegro los servgicios que cree en la clase Email , sin esto no podria funcionarte ya que de aca saco la conexion 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddTransient<Email>();
 // Add services to the container.
