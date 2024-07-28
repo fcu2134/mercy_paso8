@@ -3,267 +3,175 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>Ficha Técnica</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        th {
+            margin: 0;
+            padding: 20px;
             background-color: #f4f4f4;
         }
 
-        h1, h2 {
-            text-align: center;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+            .section h2 {
+                border-bottom: 2px solid #333;
+                padding-bottom: 5px;
+                color: #333;
+            }
+
+            .section p {
+                font-size: 14px;
+                line-height: 1.6;
+            }
+
+        .details {
+            margin: 10px 0;
+        }
+
+            .details label {
+                font-weight: bold;
+            }
+
+            .details p {
+                margin: 5px 0;
+            }
     </style>
 </head>
 <body>
-    <h1>Datos Ficha Técnica</h1>
+    <div class="container">
+        <h1>Ficha Técnica</h1>
 
-    <!-- Botón para generar PDF -->
-    <a asp-action="GenerarPdf" asp-route-id="@Model.IdDatosFichaTecnica" class="btn btn-warning">Generar PDF</a>
+        <div class="section">
+            <h2>Información del Cliente</h2>
+            <div class="details">
+                <label>Nombre del Cliente:</label>
+                <p>@Model.RecepcionEquipo?.IdClienteNavigation.Nombre</p>
+            </div>
+            <div class="details">
+                <label>Teléfono:</label>
+                <p>@Model.RecepcionEquipo?.IdClienteNavigation.Telefono</p>
+            </div>
+            <div class="details">
+                <label>Email:</label>
+                <p>@Model.RecepcionEquipo?.IdClienteNavigation.Correo</p>
+            </div>
+        </div>
 
-    <!-- Datos Ficha Técnica -->
-    <table class="table table-dark table-striped border border-light-subtle border-3">
-        <thead>
-            <tr>
-                <th colspan="3">Datos Ficha Técnica</th>
-            </tr>
-            <tr>
-                <th>ID Ficha: @Model.IdDatosFichaTecnica</th>
-                <th>Fecha Inicio: @(Model.FechaInicio?.ToString("dd/MM/yyyy"))</th>
-                <th>Fecha Finalización: @(Model.FechaFinalizacion?.ToString("dd/MM/yyyy"))</th>
-            </tr>
-        </thead>
-    </table>
+        <div class="section">
+            <h2>Detalles del Informe</h2>
+            <div class="details">
+                <label>Observaciones:</label>
+                <p>@Model.PobservacionesRecomendaciones</p>
+            </div>
+            <div class="details">
+                <label>Fecha de Inicio:</label>
+                <p>@Model.FechaInicio?.ToString("dd/MM/yyyy")</p>
+            </div>
+            <div class="details">
+                <label>Fecha de Finalización:</label>
+                <p>@Model.FechaFinalizacion?.ToString("dd/MM/yyyy")</p>
+            </div>
+        </div>
 
-    <!-- Datos del Cliente -->
-    <table class="table table-dark table-striped border border-light-subtle border-3">
-        <thead>
-            <tr>
-                <th colspan="3">Datos del Cliente</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Nombre: @Model.RecepcionEquipo?.IdClienteNavigation.Nombre</td>
-                <td>Apellido: @Model.RecepcionEquipo?.IdClienteNavigation.Apellido</td>
-                <td>Celular: @Model.RecepcionEquipo?.IdClienteNavigation.Telefono</td>
-            </tr>
-            <tr>
-                <td colspan="2">Correo: @Model.RecepcionEquipo?.IdClienteNavigation.Correo</td>
-                <td>Dirección: @Model.RecepcionEquipo?.IdClienteNavigation.Direccion</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="section">
+            <h2>Instalaciones</h2>
+            <div class="details">
+                <label>Software Instalado:</label>
+                <p>
+                    @(Model.Soinstalado switch
+                    {
+                        0 => "Windows 10",
+                        1 => "Windows 11",
+                        2 => "Linux",
+                        _ => "No especificado"
+                    })
+                </p>
+            </div>
+            <div class="details">
+                <label>Suite Office Instalado:</label>
+                <p>
+                    @(Model.SuiteOfficeInstalada switch
+                    {
+                        0 => "Microsoft Office 2013",
+                        1 => "Microsoft Office 2019",
+                        2 => "Microsoft Office 365",
+                        3 => "OpenOffice",
+                        _ => "No especificado"
+                    })
+                </p>
+            </div>
+            <div class="details">
+                <label>Lector PDF Instalado:</label>
+                <p>
+                    @(Model.LectorPdfinstalado switch
+                    {
+                        0 => "No Instalado",
+                        1 => "Instalado",
+                        2 => "No Aplica",
+                        _ => "No especificado"
+                    })
+                </p>
+            </div>
+            <div class="details">
+                <label>Navegador Web Instalado:</label>
+                <p>
+                    @(Model.NavegadorWebInstalado switch
+                    {
+                        0 => "No Instalado",
+                        1 => "Chrome",
+                        2 => "Chrome y Firefox",
+                        _ => "No especificado"
+                    })
+                </p>
+            </div>
+            <div class="details">
+                <label>Antivirus Instalado:</label>
+                <p>
+                    @(Model.AntivirusInstalado switch
+                    {
+                        "0" => "No Instalado",
+                        "1" => "Avast",
+                        "2" => "McAfee",
+                        _ => "No especificado"
+                    })
+                </p>
+            </div>
+        </div>
 
-    <!-- Datos Recepción de Equipo -->
-    <table class="table table-dark table-striped border border-light-subtle border-3">
-        <thead>
-            <tr>
-                <th colspan="3">Datos Recepción de Equipo</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Fecha: @Model.RecepcionEquipo?.Fecha</td>
-                <td>
-                    Tipo PC: @{
-                        string tipopc = Model.RecepcionEquipo?.TipoPc switch
-                        {
-                            0 => "PC Torre",
-                            1 => "Notebook",
-                            2 => "All in one",
-                            _ => "Desconocido"
-                        };
-                        @tipopc
-                    }
-                </td>
-                <td>Accesorios: @Model.RecepcionEquipo?.Accesorio</td>
-            </tr>
-            <tr>
-                <td>Marca PC: @Model.RecepcionEquipo?.MarcaPc</td>
-                <td>Modelo PC: @Model.RecepcionEquipo?.ModeloPc</td>
-                <td>Número Serie: @Model.RecepcionEquipo?.Nserie</td>
-            </tr>
-            <tr>
-                <td>
-                    Capacidad RAM: @{
-                        string capacidadram = Model.RecepcionEquipo?.CapacidadRam switch
-                        {
-                            0 => "4 GB",
-                            1 => "6 GB",
-                            2 => "8 GB",
-                            3 => "12 GB",
-                            4 => "Otra",
-                            _ => "Desconocido"
-                        };
-                        @capacidadram
-                    }
-                </td>
-                <td>
-                    Tipo GPU: @{
-                        string tipogpu = Model.RecepcionEquipo?.TipoGpu switch
-                        {
-                            0 => "Chip integrado",
-                            1 => "Tarjeta",
-                            _ => "Desconocido"
-                        };
-                        @tipogpu
-                    }
-                </td>
-                <td>Gráficos: @Model.RecepcionEquipo?.Grafico</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    Tipo Almacenamiento: @{
-                        string tipoalmacenamiento = Model.RecepcionEquipo?.TipoAlmacenamiento switch
-                        {
-                            0 => "HDD",
-                            1 => "SSD SATA",
-                            2 => "SSD M.2",
-                            3 => "SSD NVMe M.2",
-                            _ => "Desconocido"
-                        };
-                        @tipoalmacenamiento
-                    }
-                </td>
-                <td>Capacidad Almacenamiento: @Model.RecepcionEquipo?.CapacidadAlmacenamiento</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- Datos Ficha Técnica -->
-    <table class="table table-dark table-striped border border-light-subtle border-3">
-        <thead>
-            <tr>
-                <th colspan="3">Datos Ficha Técnica</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    S.O Instalado: @{
-                        string soinstalado = Model.Soinstalado switch
-                        {
-                            0 => "Windows 10",
-                            1 => "Windows 11",
-                            2 => "Linux",
-                            _ => "Desconocido"
-                        };
-                        @soinstalado
-                    }
-                </td>
-                <td>
-                    Suite Office Instalado: @{
-                        string suiteofficeinstalada = Model.SuiteOfficeInstalada switch
-                        {
-                            0 => "Microsoft Office 2013",
-                            1 => "Microsoft Office 2019",
-                            2 => "Microsoft Office 365",
-                            3 => "OpenOffice",
-                            _ => "Desconocido"
-                        };
-                        @suiteofficeinstalada
-                    }
-                </td>
-                <td>
-                    Lector PDF Instalado: @{
-                        string lectorpdfinstalado = Model.LectorPdfinstalado switch
-                        {
-                            0 => "No Instalado",
-                            1 => "Instalado",
-                            2 => "No Aplica",
-                            _ => "Desconocido"
-                        };
-                        @lectorpdfinstalado
-                    }
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Navegador Web Instalado: @{
-                        string navegadorwebinstalado = Model.NavegadorWebInstalado switch
-                        {
-                            0 => "No Instalado",
-                            1 => "Chrome",
-                            2 => "Chrome y Firefox",
-                            _ => "Desconocido"
-                        };
-                        @navegadorwebinstalado
-                    }
-                </td>
-                <td>
-                    Antivirus Instalado: @{
-                        string antivirusinstalado = Model.AntivirusInstalado switch
-                        {
-                            "0" => "No Instalado",
-                            "1" => "Avast",
-                            "2" => "McAfee",
-                            _ => "Desconocido"
-                        };
-                        @antivirusinstalado
-                    }
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- Diagnóstico y Soluciones -->
-    <table class="table table-dark table-striped border border-light-subtle border-3">
-        <thead>
-            <tr>
-                <th colspan="3">Diagnóstico y Soluciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
-            {
-                <tr>
-                    <td colspan="3">No hay diagnóstico disponible</td>
-                </tr>
-                <tr>
-                    <td colspan="3">No hay solución disponible</td>
-                </tr>
-            }
-            else
-            {
-                foreach (var diagnostico in Model.Diagnosticosolucions)
+        <div class="section">
+            <h2>Diagnósticos y Soluciones</h2>
+            <ul>
+                @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
                 {
-                    <tr>
-                        <td>Diagnóstico: @diagnostico.DescripcionDiagnostico</td>
-                        <td>Solución: @diagnostico.DescripcionSolucion</td>
-                    </tr>
+                    <li>No hay diagnósticos ni soluciones disponibles</li>
                 }
-            }
-        </tbody>
-    </table>
-
-    <!-- Observaciones y Recomendaciones -->
-    <table class="table table-dark table-striped border border-light-subtle border-3">
-        <thead>
-            <tr>
-                <th colspan="3">Observaciones y Recomendaciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td colspan="3">@Model.PobservacionesRecomendaciones</td>
-            </tr>
-        </tbody>
-    </table>
+                else
+                {
+                    @foreach (var diagnostico in Model.Diagnosticosolucions)
+                    {
+                        <li>@diagnostico.DescripcionDiagnostico - @diagnostico.DescripcionSolucion</li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
 </body>
 </html>

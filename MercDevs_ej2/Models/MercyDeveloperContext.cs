@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
-
+﻿using Microsoft.EntityFrameworkCore;
 namespace MercDevs_ej2.Models;
 
 public partial class MercyDeveloperContext : DbContext
@@ -30,8 +26,8 @@ public partial class MercyDeveloperContext : DbContext
     public virtual DbSet<Servicio> Servicios { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+  
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured!)
         {

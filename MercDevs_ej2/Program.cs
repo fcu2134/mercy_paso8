@@ -1,44 +1,38 @@
 using MercDevs_ej2.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Rotativa.AspNetCore;
-
+//Para iniciar sesión y prohibir ingresos
+using Microsoft.AspNetCore.Authentication.Cookies;
+using PdfSharp.Charting;
+using System.Configuration;
+//FIN
 var builder = WebApplication.CreateBuilder(args);
-
-// Agregar servicios al contenedor.
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
+builder.Services.AddTransient<Email>();
+// Add services to the container.
 builder.Services.AddControllersWithViews();
-
-// Configuración de la conexión a la base de datos
+// coneccion a la bdd
 builder.Services.AddDbContext<MercyDeveloperContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("connection"),
-    Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.4.25-mariadb")));
-
-// Configuración de autenticación
+options.UseMySql(builder.Configuration.GetConnectionString("connection"),
+Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.4.25-mariadb")));
+//end bdd
+//Para el login 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Login/Ingresar";
+
         options.ExpireTimeSpan = TimeSpan.FromDays(1);
     });
 
+//FinParal ogin
 var app = builder.Build();
 
-// Verifica que el directorio wwwroot exista y la ruta sea correcta
-var env = app.Services.GetRequiredService<IWebHostEnvironment>();
-var rotativaPath = Path.Combine(env.WebRootPath, "rotativa", "wkhtmltopdf.exe");
-
-if (!File.Exists(rotativaPath))
-{
-    throw new FileNotFoundException("El archivo wkhtmltopdf.exe no se encuentra en la ruta especificada.", rotativaPath);
-}
-
-// Configura Rotativa con la ruta correcta
-RotativaConfiguration.Setup(rotativaPath);
-
-// Configuración del pipeline de solicitudes HTTP
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -47,9 +41,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthentication();
+
 app.UseAuthorization();
 
-// Configuración de rutas
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Login}/{action=Ingresar}/{id?}");

@@ -1,243 +1,379 @@
 ﻿@model MercDevs_ej2.Models.Datosfichatecnica
 
-<h1>Datos Ficha Tecnica</h1>
+@if (Model == null)
+{
+    <p>Modelo no disponible.</p>
+}
+else
+{
+    <div id="pdfContent">
+        <h1>Datos Ficha Técnica</h1>
 
-<a asp-action="GenerarPdf" asp-route-id="@Model.IdDatosFichaTecnica" class="btn btn-warning">Generar PDF</a>
+        <table class="table table-dark table-striped border border-light-subtle border-3">
+            <thead style="text-align:center">
+                <tr>
+                    <th colspan="3">Datos Ficha Técnica</th>
+                </tr>
+                <tr>
+                    <th class="border-end">ID Ficha: @Model.IdDatosFichaTecnica</th>
+                    <th class="border-end">Fecha Inicio: @(Model.FechaInicio?.ToString("dd/MM/yyyy"))</th>
+                    <th class="border-end">Fecha Finalización: @(Model.FechaFinalizacion?.ToString("dd/MM/yyyy"))</th>
+                </tr>
+            </thead>
+        </table>
 
+        <table class="table table-dark table-striped border border-light-subtle border-3">
+            <thead style="text-align:center">
+                <tr>
+                    <th colspan="3">Datos del Cliente</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th class="border-end">Nombre: @(Model.RecepcionEquipo?.IdClienteNavigation?.Nombre ?? "No disponible")</th>
+                    <th class="border-end">Apellido: @(Model.RecepcionEquipo?.IdClienteNavigation?.Apellido ?? "No disponible")</th>
+                    <th class="border-end">Celular: @(Model.RecepcionEquipo?.IdClienteNavigation?.Telefono ?? "No disponible")</th>
+                </tr>
+                <tr>
+                    <td colspan="2" class="border-end">Correo: @(Model.RecepcionEquipo?.IdClienteNavigation?.Correo ?? "No disponible")</td>
+                    <td colspan="2" class="border-end">Dirección: @(Model.RecepcionEquipo?.IdClienteNavigation?.Direccion ?? "No disponible")</td>
+                </tr>
+            </tbody>
+        </table>
 
+        <table class="table table-dark table-striped border border-light-subtle border-3">
+            <thead style="text-align:center">
+                <tr>
+                    <th colspan="3">Datos Recepción de Equipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th class="border-end">Fecha: @(Model.RecepcionEquipo?.Fecha?.ToString("dd/MM/yyyy") ?? "No disponible")</th>
+                    <th class="border-end">
+                        Tipo PC: @{
+                            string tipopc = "";
+                            switch (Model.RecepcionEquipo?.TipoPc)
+                            {
+                                case 0:
+                                    tipopc = "PC Torre";
+                                    break;
+                                case 1:
+                                    tipopc = "Notebook";
+                                    break;
+                                case 2:
+                                    tipopc = "All in one";
+                                    break;
+                                default:
+                                    tipopc = "No disponible";
+                                    break;
+                            }
+                            @tipopc
+                        }
+                    </th>
+                    <th class="border-end">Accesorios: @(Model.RecepcionEquipo?.Accesorio ?? "No disponible")</th>
+                </tr>
+                <tr>
+                    <th class="border-end">Marca PC: @(Model.RecepcionEquipo?.MarcaPc ?? "No disponible")</th>
+                    <th class="border-end">Modelo PC: @(Model.RecepcionEquipo?.ModeloPc ?? "No disponible")</th>
+                    <th class="border-end">Número Serie: @(Model.RecepcionEquipo?.Nserie ?? "No disponible")</th>
+                </tr>
+                <tr>
+                    <th class="border-end">
+                        Capacidad RAM: @{
+                            string capacidadram = "";
+                            switch (Model.RecepcionEquipo?.CapacidadRam)
+                            {
+                                case 0:
+                                    capacidadram = "4 GB";
+                                    break;
+                                case 1:
+                                    capacidadram = "6 GB";
+                                    break;
+                                case 2:
+                                    capacidadram = "8 GB";
+                                    break;
+                                case 3:
+                                    capacidadram = "12 GB";
+                                    break;
+                                case 4:
+                                    capacidadram = "OTRA";
+                                    break;
+                                default:
+                                    capacidadram = "No disponible";
+                                    break;
+                            }
+                            @capacidadram
+                        }
+                    </th>
+                    <th class="border-end">
+                        Tipo GPU: @{
+                            string tipogpu = "";
+                            switch (Model.RecepcionEquipo?.TipoGpu)
+                            {
+                                case 0:
+                                    tipogpu = "Chip integrado";
+                                    break;
+                                case 1:
+                                    tipogpu = "Tarjeta";
+                                    break;
+                                default:
+                                    tipogpu = "No disponible";
+                                    break;
+                            }
+                            @tipogpu
+                        }
+                    </th>
+                    <th class="border-end">Gráficos: @(Model.RecepcionEquipo?.Grafico ?? "No disponible")</th>
+                </tr>
+                <tr>
+                    <td colspan="2" class="border-end">
+                        Tipo Almacenamiento: @{
+                            string tipoalmacenamiento = "";
+                            switch (Model.RecepcionEquipo?.TipoAlmacenamiento)
+                            {
+                                case 0:
+                                    tipoalmacenamiento = "HDD";
+                                    break;
+                                case 1:
+                                    tipoalmacenamiento = "SSD SATA";
+                                    break;
+                                case 2:
+                                    tipoalmacenamiento = "SSD M.2";
+                                    break;
+                                case 3:
+                                    tipoalmacenamiento = "SSD NVM M.2";
+                                    break;
+                                default:
+                                    tipoalmacenamiento = "No disponible";
+                                    break;
+                            }
+                            @tipoalmacenamiento
+                        }
+                    </td>
+                    <td colspan="2" class="border-end">Capacidad Almacenamiento: @(Model.RecepcionEquipo?.CapacidadAlmacenamiento ?? "No disponible")</td>
+                </tr>
+            </tbody>
+        </table>
 
-<table class="table table-dark table-striped border border-light-subtle border-3">
-    <thead style="text-align:center">
-        <tr>
-            <th colspan="3">Datos Ficha Tecnica</th>
-        </tr>
-        <tr>
-            <th class="border-end">ID Ficha: @Model.IdDatosFichaTecnica</th>
-            <th class="border-end">Fecha Inicio: @(Model.FechaInicio?.ToString("dd/MM/yyyy"))</th>
-            <th class="border-end">Fecha Finalizacion: @(Model.FechaFinalizacion?.ToString("dd/MM/yyyy"))</th>
-        </tr>
-    </thead>
-</table>
+        <table class="table table-dark table-striped border border-light-subtle border-3">
+            <thead style="text-align:center">
+                <tr>
+                    <th colspan="3">Datos Ficha Técnica</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th class="border-end">
+                        S.O Instalado: @{
+                            string soinstalado = "";
+                            switch (Model.Soinstalado)
+                            {
+                                case 0:
+                                    soinstalado = "Windows 10";
+                                    break;
+                                case 1:
+                                    soinstalado = "Windows 11";
+                                    break;
+                                case 2:
+                                    soinstalado = "Linux";
+                                    break;
+                                default:
+                                    soinstalado = "No disponible";
+                                    break;
+                            }
+                            @soinstalado
+                        }
+                    </th>
+                    <th class="border-end">
+                        Suite Office Instalada: @{
+                            string suiteofficeinstalada = "";
+                            switch (Model.SuiteOfficeInstalada)
+                            {
+                                case 0:
+                                    suiteofficeinstalada = "Microsoft Office 2013";
+                                    break;
+                                case 1:
+                                    suiteofficeinstalada = "Microsoft Office 2019";
+                                    break;
+                                case 2:
+                                    suiteofficeinstalada = "Microsoft Office 365";
+                                    break;
+                                case 3:
+                                    suiteofficeinstalada = "OpenOffice";
+                                    break;
+                                default:
+                                    suiteofficeinstalada = "No disponible";
+                                    break;
+                            }
+                            @suiteofficeinstalada
+                        }
+                    </th>
+                    <th class="border-end">
+                        Lector PDF Instalado: @{
+                            string lectorpdfinstalado = "";
+                            switch (Model.LectorPdfinstalado)
+                            {
+                                case 0:
+                                    lectorpdfinstalado = "No Instalado";
+                                    break;
+                                case 1:
+                                    lectorpdfinstalado = "Instalado";
+                                    break;
+                                case 2:
+                                    lectorpdfinstalado = "No Aplica";
+                                    break;
+                                default:
+                                    lectorpdfinstalado = "No disponible";
+                                    break;
+                            }
+                            @lectorpdfinstalado
+                        }
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="2" class="border-end">
+                        Navegador Web Instalado: @{
+                            string navegadorwebinstalado = "";
+                            switch (Model.NavegadorWebInstalado)
+                            {
+                                case 0:
+                                    navegadorwebinstalado = "No Instalado";
+                                    break;
+                                case 1:
+                                    navegadorwebinstalado = "Chrome";
+                                    break;
+                                case 2:
+                                    navegadorwebinstalado = "Chrome y Firefox";
+                                    break;
+                                default:
+                                    navegadorwebinstalado = "No disponible";
+                                    break;
+                            }
+                            @navegadorwebinstalado
+                        }
+                    </td>
+                    <td colspan="2" class="border-end">
+                        Antivirus Instalado: @{
+                            string antivirusinstalado = "";
+                            switch (Model.AntivirusInstalado)
+                            {
+                                case "0":
+                                    antivirusinstalado = "No Instalado";
+                                    break;
+                                case "1":
+                                    antivirusinstalado = "Avast";
+                                    break;
+                                case "2":
+                                    antivirusinstalado = "McAfee";
+                                    break;
+                                default:
+                                    antivirusinstalado = "No disponible";
+                                    break;
+                            }
+                            @antivirusinstalado
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-<!-- Datos del Cliente -->
-<table class="table table-dark table-striped border border-light-subtle border-3">
-    <thead style="text-align:center">
-        <tr>
-            <th colspan="3">Datos del Cliente</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th class="border-end">Nombre: @Model.RecepcionEquipo?.IdClienteNavigation.Nombre</th>
-            <th class="border-end">Apellido: @Model.RecepcionEquipo?.IdClienteNavigation.Apellido</th>
-            <th class="border-end">Celular: @Model.RecepcionEquipo?.IdClienteNavigation.Telefono</th>
-        </tr>
-        <tr>
-            <td colspan="2" class="border-end">Correo: @Model.RecepcionEquipo?.IdClienteNavigation.Correo</td>
-            <td colspan="2" class="border-end">Dirección: @Model.RecepcionEquipo?.IdClienteNavigation.Direccion</td>
-        </tr>
-    </tbody>
-</table>
+        <table class="table table-dark table-striped border border-light-subtle border-3">
+            <thead style="text-align:center">
+                <tr>
+                    <th colspan="3">Diagnóstico y Soluciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
+                    {
+                        <th class="border-end">No hay diagnóstico disponible</th>
+                    }
+                    else
+                    {
+                        foreach (var diagnostico in Model.Diagnosticosolucions)
+                        {
+                            <th class="border-end">Diagnóstico: @diagnostico.DescripcionDiagnostico</th>
+                        }
+                    }
+                </tr>
+                <tr>
+                    @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
+                    {
+                        <th class="border-end">No hay solución disponible</th>
+                    }
+                    else
+                    {
+                        foreach (var diagnostico in Model.Diagnosticosolucions)
+                        {
+                            <th class="border-end">Solución: @diagnostico.DescripcionSolucion</th>
+                        }
+                    }
+                </tr>
+            </tbody>
+        </table>
 
-<!-- Datos Recepción de Equipo -->
-<table class="table table-dark table-striped border border-light-subtle border-3">
-    <thead style="text-align:center">
-        <tr>
-            <th colspan="3">Datos Recepción de Equipo</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th class="border-end">Fecha: @Model.RecepcionEquipo?.Fecha</th>
-            <th class="border-end">
-                Tipo Pc: @{
-                    string tipopc = Model.RecepcionEquipo?.TipoPc switch
-                    {
-                        0 => "Pc Torre",
-                        1 => "Notebook",
-                        2 => "All in one",
-                        _ => ""
-                    };
-                    @tipopc
-                }
-            </th>
-            <th class="border-end">Accesorios: @Model.RecepcionEquipo?.Accesorio</th>
-        </tr>
-        <tr>
-            <th class="border-end">Marca Pc: @Model.RecepcionEquipo?.MarcaPc</th>
-            <th class="border-end">Modelo Pc: @Model.RecepcionEquipo?.ModeloPc</th>
-            <th class="border-end">Numero Serie: @Model.RecepcionEquipo?.Nserie</th>
-        </tr>
-        <tr>
-            <th class="border-end">
-                Capacidad RAM: @{
-                    string capacidadram = Model.RecepcionEquipo?.CapacidadRam switch
-                    {
-                        0 => "4 GB",
-                        1 => "6 GB",
-                        2 => "8 GB",
-                        3 => "12 GB",
-                        4 => "OTRA",
-                        _ => ""
-                    };
-                    @capacidadram
-                }
-            </th>
-            <th class="border-end">
-                Tipo GPU: @{
-                    string tipogpu = Model.RecepcionEquipo?.TipoGpu switch
-                    {
-                        0 => "Chip integrado",
-                        1 => "Tarjeta",
-                        _ => ""
-                    };
-                    @tipogpu
-                }
-            </th>
-            <th class="border-end">Graficos: @Model.RecepcionEquipo?.Grafico</th>
-        </tr>
-        <tr>
-            <td colspan="2" class="border-end">
-                Tipo Almacenamiento: @{
-                    string tipoalmacenamiento = Model.RecepcionEquipo?.TipoAlmacenamiento switch
-                    {
-                        0 => "HDD",
-                        1 => "SSD SATA",
-                        2 => "SSD M.2",
-                        3 => "SSD NVM M.2",
-                        _ => ""
-                    };
-                    @tipoalmacenamiento
-                }
-            </td>
-            <td colspan="2" class="border-end">Capacidad Almacenamiento: @Model.RecepcionEquipo?.CapacidadAlmacenamiento</td>
-        </tr>
-    </tbody>
-</table>
+        <table class="table table-dark table-striped border border-light-subtle border-3">
+            <thead style="text-align:center">
+                <tr>
+                    <th colspan="3">Observaciones y Recomendaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="3" class="border-end">@Model.PobservacionesRecomendaciones</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-<!-- Datos Ficha Técnica -->
-<table class="table table-dark table-striped border border-light-subtle border-3">
-    <thead style="text-align:center">
-        <tr>
-            <th colspan="3">Datos Ficha Tecnica</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th class="border-end">
-                S.O instalado: @{
-                    string soinstalado = Model.Soinstalado switch
-                    {
-                        0 => "Windows 10",
-                        1 => "Windows 11",
-                        2 => "Linux",
-                        _ => ""
-                    };
-                    @soinstalado
-                }
-            </th>
-            <th class="border-end">
-                Suite Office instalada: @{
-                    string suiteofficeinstalada = Model.SuiteOfficeInstalada switch
-                    {
-                        0 => "Microsoft Office 2013",
-                        1 => "Microsoft Office 2019",
-                        2 => "Microsoft Office 365",
-                        3 => "OpenOffice",
-                        _ => ""
-                    };
-                    @suiteofficeinstalada
-                }
-            </th>
-            <th class="border-end">
-                Lector PDF instalado: @{
-                    string lectorpdfinstalado = Model.LectorPdfinstalado switch
-                    {
-                        0 => "No Instalado",
-                        1 => "Instalado",
-                        2 => "No Aplica",
-                        _ => ""
-                    };
-                    @lectorpdfinstalado
-                }
-            </th>
-        </tr>
-        <tr>
-            <td colspan="2" class="border-end">
-                Navegador Web instalado: @{
-                    string navegadorwebinstalado = Model.NavegadorWebInstalado switch
-                    {
-                        0 => "No Instalado",
-                        1 => "Chrome",
-                        2 => "Chrome y Firefox",
-                        _ => ""
-                    };
-                    @navegadorwebinstalado
-                }
-            </td>
-            <td colspan="2" class="border-end">
-                Antivirus instalado: @{
-                    string antivirusinstalado = Model.AntivirusInstalado switch
-                    {
-                        "0" => "No Instalado",
-                        "1" => "Avast",
-                        "2" => "Mcfee",
-                        _ => ""
-                    };
-                    @antivirusinstalado
-                }
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <button id="EnviarFichaPorCorreo" style="cursor: pointer; padding: 10px 20px; margin-left: 20px;">Enviar PDF por Correo</button>
+    <img id="generatePdf" src="@Url.Content("~/imagenes/descarga.png")" alt="Generar PDF" style="cursor: pointer; width: 100px; height: auto; margin-left:45%;" />
 
-<!-- Diagnóstico y Soluciones -->
-<table class="table table-dark table-striped border border-light-subtle border-3">
-    <thead style="text-align:center">
-        <tr>
-            <th colspan="3">Diagnostico y Soluciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
-            {
-                <th class="border-end">No hay diagnostico disponible</th>
-            }
-            else
-            {
-                foreach (var diagnostico in Model.Diagnosticosolucions)
-                {
-                    <th class="border-end">Diagnostico: @diagnostico.DescripcionDiagnostico</th>
-                }
-            }
-        </tr>
-        <tr>
-            @if (Model.Diagnosticosolucions == null || !Model.Diagnosticosolucions.Any())
-            {
-                <th class="border-end">No hay solucion disponible</th>
-            }
-            else
-            {
-                foreach (var diagnostico in Model.Diagnosticosolucions)
-                {
-                    <th class="border-end">Solucion: @diagnostico.DescripcionSolucion</th>
-                }
-            }
-        </tr>
-    </tbody>
-</table>
+    <!-- Scripts para html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script>
+        document.getElementById('generatePdf').addEventListener('click', function () {
+            var element = document.getElementById('pdfContent'); // Selecciona el contenido deseado
+            var opt = {
+                margin: 0.5, // Ajusta el margen si es necesario
+                filename: 'ficha_tecnica.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
 
-<!-- Observaciones y Recomendaciones -->
-<table class="table table-dark table-striped border border-light-subtle border-3">
-    <thead style="text-align:center">
-        <tr>
-            <th colspan="3">Observaciones y Recomendaciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th class="border-end">@Model.PobservacionesRecomendaciones</th>
-        </tr>
-    </tbody>
-</table>
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+               
+                var totalPages = pdf.internal.getNumberOfPages();
+                if (totalPages > 1) {
+                    pdf.deletePage(2); 
+                }
+
+              
+                var pdfData = pdf.output('datauristring');
+
+                fetch('/Datosfichatecnicas/EnviarFichaPorCorreo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ pdfData: pdfData.split(',')[1] }) // Solo enviar la parte base64
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('PDF enviado correctamente.');
+                    } else {
+                        alert('Error al enviar el PDF.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al enviar el PDF.');
+                });
+            });
+        });
+    </script>
+}

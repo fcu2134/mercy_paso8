@@ -1,25 +1,72 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Rotativa.AspNetCore;
 using MercDevs_ej2.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MercDevs_ej2.Controllers
 {
     public class DatosfichatecnicasController : Controller
     {
         private readonly MercyDeveloperContext _context;
-        private readonly string _wkhtmltopdfPath;
+        private readonly Email _emailService;
+        
 
-        public DatosfichatecnicasController(MercyDeveloperContext context)
+        public DatosfichatecnicasController(MercyDeveloperContext context, Email emailService)
         {
             _context = context;
-            _wkhtmltopdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "rotativa", "wkhtmltopdf.exe");
+            _emailService = emailService;
         }
 
-        public async Task<IActionResult> FichaTecnica(int? id)
+
+        [HttpPost]
+        public async Task<IActionResult> EnviarFichaPorCorreo([FromBody] PdfRequest request)
+        {
+            // Recupera el modelo basado en la información proporcionada
+            var modelo = await _context.Datosfichatecnicas
+                .Include(d => d.RecepcionEquipo)
+                .ThenInclude(r => r.IdClienteNavigation)
+                .FirstOrDefaultAsync(d => d.IdDatosFichaTecnica == request.Id);
+
+            if (modelo == null)
+            {
+                return NotFound(new { success = false, message = "Modelo no encontrado" });
+            }
+
+            var destinatario = modelo.RecepcionEquipo?.IdClienteNavigation?.Correo;
+
+            if (destinatario != null)
+            {
+                try
+                {
+                    // Decodifica el PDF recibido en base64
+                    var pdfBytes = Convert.FromBase64String(request.PdfData.Split(',')[1]);
+
+                    // Envía el PDF por correo
+                    var asunto = "Ficha Técnica";
+                    var cuerpo = "Adjunto la ficha técnica solicitada.";
+                    await _emailService.SendEmailWithAttachmentAsync(destinatario, asunto, cuerpo, pdfBytes, "ficha_tecnica.pdf");
+
+                    return Json(new { success = true });
+                }
+                catch (Exception ex)
+                {
+                    // Maneja excepciones y devuelve un error
+                    return Json(new { success = false, message = $"Error al enviar el correo: {ex.Message}" });
+                }
+            }
+            else
+            {
+                return Json(new { success = false, message = "El correo electrónico del destinatario no se encuentra." });
+            }
+        }
+        public class PdfRequest
+        {
+            public string PdfData { get; set; }
+            public int Id { get; set; }
+        }
+    
+
+    public async Task<IActionResult> FichaTecnica(int? id)
         {
             var mercydevsEjercicio2Context = await _context.Datosfichatecnicas
                 .Where(d => d.IdDatosFichaTecnica == id)
@@ -205,41 +252,6 @@ namespace MercDevs_ej2.Controllers
         private bool DatosfichatecnicaExists(int id)
         {
             return _context.Datosfichatecnicas.Any(e => e.IdDatosFichaTecnica == id);
-        }
-
-        // Método para generar PDF usando Rotativa
-        public async Task<IActionResult> Generarpdf(int id)
-        {
-            // Obtener los datos de la ficha técnica, incluyendo las propiedades relacionadas
-            var fichaTecnica = await _context.Datosfichatecnicas
-                .Where(d => d.IdDatosFichaTecnica == id)
-                .Include(d => d.RecepcionEquipo)
-                .ThenInclude(r => r.IdClienteNavigation) // Incluye los datos del cliente
-                .Include(d => d.Diagnosticosolucions)
-                .FirstOrDefaultAsync();
-
-            if (fichaTecnica == null)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                // Generar el PDF utilizando la vista y el modelo
-                return new ViewAsPdf("VistaPdf", fichaTecnica)
-                {
-                    FileName = "FichaTecnica.pdf",
-                    PageSize = Rotativa.AspNetCore.Options.Size.A4,
-                    PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait, // Opcional, según el diseño
-                    CustomSwitches = "--disable-smart-shrinking" // Opcional, para ajustar el contenido al tamaño de página
-                };
-            }
-            catch (Exception ex)
-            {
-                // Manejo de excepciones, registrar el error y/o mostrar un mensaje adecuado
-                // Puedes usar un logger para registrar el error
-                return StatusCode(500, $"Error al generar el PDF: {ex.Message}");
-            }
         }
     }
 }
