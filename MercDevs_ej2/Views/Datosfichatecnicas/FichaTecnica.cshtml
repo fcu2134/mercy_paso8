@@ -6,9 +6,12 @@
 }
 else
 {
-    <div id="pdfContent">
-        <h1>Datos Ficha Técnica</h1>
+   
+    
 
+   
+        <h1>Datos Ficha Técnica</h1>
+    <div id="pdfContent">
         <table class="table table-dark table-striped border border-light-subtle border-3">
             <thead style="text-align:center">
                 <tr>
@@ -16,8 +19,8 @@ else
                 </tr>
                 <tr>
                     <th class="border-end">ID Ficha: @Model.IdDatosFichaTecnica</th>
-                    <th class="border-end">Fecha Inicio: @(Model.FechaInicio?.ToString("dd/MM/yyyy"))</th>
-                    <th class="border-end">Fecha Finalización: @(Model.FechaFinalizacion?.ToString("dd/MM/yyyy"))</th>
+                    <th class="border-end">Fecha Inicio: @(Model.FechaInicio?.ToString("dd/MM/yyyy") ?? "No disponible")</th>
+                    <th class="border-end">Fecha Finalización: @(Model.FechaFinalizacion?.ToString("dd/MM/yyyy") ?? "No disponible")</th>
                 </tr>
             </thead>
         </table>
@@ -327,75 +330,69 @@ else
             </tbody>
         </table>
     </div>
+        <button id="enviarPdf" style="cursor: pointer; padding: 10px 20px; margin-left: 20px; background-color:red">Enviar PDF por Correo</button>
+        <img id="descargaarPdf" src="@Url.Content("~/imagenes/descarga.png")" alt="Descargar PDF" style="cursor: pointer; width: 120px; height: auto; padding: 10px 20px;margin-left:45%" />
 
+        <!-- Scripts para html2pdf -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var element = document.getElementById('pdfContent');
+                var opt = {
+                    margin: 0.5,
+                    filename: 'ficha_tecnica.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
 
-    <!-- Scripts para html2pdf -->
-    <button id="enviarPdf" style="cursor: pointer; padding: 10px 20px; margin-left: 20px; background-color:red">Enviar PDF por Correo</button>
-    <img id="descargaarPdf" src="@Url.Content("~/imagenes/descarga.png")" alt="Descargar PDF" style="cursor: pointer; width: 120px; height: auto; padding: 10px 20px;margin-left:45%" />
-   
+                html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                    var totalPages = pdf.internal.getNumberOfPages();
+                    if (totalPages > 1) {
+                        pdf.deletePage(2);
+                    }
 
-    <!-- Scripts para html2pdf -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var element = document.getElementById('pdfContent');
-            var opt = {
-                margin: 0.5,
-                filename: 'ficha_tecnica.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
+                    window.pdfData = pdf.output('datauristring');
+                    console.log('PDF Data:', window.pdfData);
+                });
 
-            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                var totalPages = pdf.internal.getNumberOfPages();
-                if (totalPages > 1) {
-                    pdf.deletePage(2);
-                }
+                document.getElementById('descargaarPdf').addEventListener('click', function () {
+                    if (window.pdfData) {
+                        var link = document.createElement('a');
+                        link.href = window.pdfData;
+                        link.download = 'ficha_tecnica.pdf';
+                        link.click();
+                    } else {
+                        alert('Primero genera el PDF.');
+                    }
+                });
 
-              
-                window.pdfData = pdf.output('datauristring');
-                console.log('PDF Data:', window.pdfData);
-            });
-
-            document.getElementById('descargaarPdf').addEventListener('click', function () {
-                if (window.pdfData) {
-                    var link = document.createElement('a');
-                    link.href = window.pdfData;
-                    link.download = 'ficha_tecnica.pdf';
-                    link.click();
-                } else {
-                    alert('Primero genera el PDF.');
-                }
-            });
-
-            document.getElementById('enviarPdf').addEventListener('click', function () {
-                if (window.pdfData) {
-                    fetch('/Datosfichatecnicas/EnviarFichaPorCorreo', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ pdfData: window.pdfData.split(',')[1], Id: @Model.IdDatosFichaTecnica })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert('PDF enviado correctamente.');
-                            } else {
-                                alert('Error al enviar el PDF: ' + data.message);
-                            }
+                document.getElementById('enviarPdf').addEventListener('click', function () {
+                    if (window.pdfData) {
+                        fetch('/Datosfichatecnicas/EnviarFichaPorCorreo', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ pdfData: window.pdfData.split(',')[1], Id: @Model.IdDatosFichaTecnica })
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Error al enviar el PDF.');
-                        });
-                } else {
-                    alert('Primero genera el PDF.');
-                }
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('PDF enviado correctamente.');
+                                } else {
+                                    alert('Error al enviar el PDF: ' + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Error al enviar el PDF.');
+                            });
+                    } else {
+                        alert('Primero genera el PDF.');
+                    }
+                });
             });
-        });
-    </script>
-    }
-
-
+        </script>
+    
+}

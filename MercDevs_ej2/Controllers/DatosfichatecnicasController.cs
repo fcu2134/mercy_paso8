@@ -69,13 +69,24 @@ namespace MercDevs_ej2.Controllers
 
         public async Task<IActionResult> FichaTecnica(int? id)
         {
-            var mercydevsEjercicio2Context = await _context.Datosfichatecnicas
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var datosFichaTecnica = await _context.Datosfichatecnicas
                 .Where(d => d.IdDatosFichaTecnica == id)
                 .Include(d => d.RecepcionEquipo)
+                    .ThenInclude(re => re.IdClienteNavigation) // Incluye el cliente asociado
                 .Include(d => d.Diagnosticosolucions)
-                .Include(d => d.RecepcionEquipo.IdClienteNavigation)
-                .FirstOrDefaultAsync(d => d.RecepcionEquipoId == id);
-            return View(mercydevsEjercicio2Context);
+                .FirstOrDefaultAsync();
+
+            if (datosFichaTecnica == null)
+            {
+                return NotFound();
+            }
+
+            return View(datosFichaTecnica);
         }
 
         public async Task<IActionResult> Inicio()
