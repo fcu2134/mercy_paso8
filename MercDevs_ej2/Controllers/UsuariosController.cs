@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MercDevs_ej2.Models;
-using BCrypt.Net;
-
+using DevOne.Security.Cryptography.BCrypt;
 namespace MercDevs_ej2.Controllers
 {
     public class UsuariosController : Controller

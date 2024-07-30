@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MercDevs_ej2.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Rotativa.AspNetCore;
+
 
 namespace MercDevs_ej2.Controllers
 {
